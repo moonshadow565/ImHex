@@ -53,6 +53,7 @@ add_executable(imhex ${application_type}
         source/helpers/encoding_file.cpp
 
         source/providers/file_provider.cpp
+        source/providers/mem_provider.cpp
 
         source/views/view_hexeditor.cpp
         source/views/view_pattern_editor.cpp

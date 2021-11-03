@@ -7,6 +7,7 @@
 #include <hex/pattern_language/pattern_data.hpp>
 
 #include "providers/file_provider.hpp"
+#include "providers/mem_provider.hpp"
 #include "helpers/patches.hpp"
 #include "helpers/project_file_handler.hpp"
 #include "helpers/loader_script_handler.hpp"
@@ -697,7 +698,7 @@ namespace hex {
     }
 
     void ViewHexEditor::openFile(const std::string &path) {
-        ImHexApi::Provider::add<prv::FileProvider>(path);
+        ImHexApi::Provider::add<prv::MemProvider>(path);
         auto provider = ImHexApi::Provider::get();
 
         if (!provider->isWritable()) {
