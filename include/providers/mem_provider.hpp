@@ -40,6 +40,7 @@ namespace hex::prv {
 
     private:
         HANDLE m_handle = INVALID_HANDLE_VALUE;
+        u64 m_exe_base = 0;
         std::string m_path;
 
         void open();

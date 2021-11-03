@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <cstring>
+#include <fmt/format.h>
 
 #include <hex/helpers/utils.hpp>
 #include <hex/helpers/file.hpp>
@@ -105,6 +106,7 @@ namespace hex::prv {
 
         result.emplace_back("hex.builtin.provider.file.path"_lang, this->m_path);
         result.emplace_back("hex.builtin.provider.file.size"_lang, hex::toByteString(this->getActualSize()));
+        result.emplace_back("EXE_BASE", fmt::format("{:016X}", this->m_exe_base));
 
         return result;
     }
@@ -130,7 +132,7 @@ namespace hex::prv {
             HMODULE module = {};
             DWORD size = {};
             EnumProcessModules(m_handle, &module, sizeof(module), &size);
-            // setBaseAddress((uint32_t)(uintptr_t)module);
+            m_exe_base = (u32)(uintptr_t)module;
 
             break;
         }
@@ -142,6 +144,7 @@ namespace hex::prv {
         if (m_handle != INVALID_HANDLE_VALUE) {
             CloseHandle(m_handle);
             m_handle = INVALID_HANDLE_VALUE;
+            m_exe_base = 0;
         }
     }
 }

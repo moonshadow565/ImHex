@@ -10,6 +10,7 @@
 #include <hex/pattern_language/evaluator.hpp>
 #include <hex/pattern_language/pattern_data.hpp>
 
+#include <charconv>
 #include <vector>
 
 #include <fmt/args.h>
@@ -44,6 +45,17 @@ namespace hex::plugin::builtin {
 
     void registerPatternLanguageFunctions() {
         using namespace hex::pl;
+
+        ContentRegistry::PatternLanguageFunctions::add({}, "EXE_BASE", ContentRegistry::PatternLanguageFunctions::NoParameters, [](Evaluator *ctx, auto const& params) -> std::optional<Token::Literal> {
+            auto info = ctx->getProvider()->getDataInformation();
+            u64 base = 0;
+            for (auto const& [key, value]: info) {
+                if (key == "EXE_BASE") {
+                    std::from_chars(value.data(), value.data() + value.size(), base, 16);
+                }
+            }
+            return u128(base);
+        });
 
         ContentRegistry::PatternLanguageFunctions::Namespace nsStd = { "std" };
         {
