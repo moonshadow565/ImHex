@@ -44,11 +44,11 @@ namespace hex::prv {
 
     void MemProvider::read(u64 offset, void *buffer, size_t size, bool overlays) {
 
-        if ((offset - this->getBaseAddress()) > (this->getSize() - size) || buffer == nullptr || size == 0)
+        if (/*(offset - this->getBaseAddress()) > (this->getSize() - size) ||*/ buffer == nullptr || size == 0)
             return;
 
         auto const address = PageSize * this->m_currPage + offset - this->getBaseAddress();
-        auto const pointer = (void*)(uintptr_t)(uint32_t)address;
+        auto const pointer = (void*)(uintptr_t)address;
 
         ReadProcessMemory(m_handle, pointer, buffer, size, nullptr);
 
@@ -61,7 +61,7 @@ namespace hex::prv {
     }
 
     void MemProvider::write(u64 offset, const void *buffer, size_t size) {
-        if (((offset - this->getBaseAddress()) + size) > this->getSize() || buffer == nullptr || size == 0)
+        if (/*((offset - this->getBaseAddress()) + size) > this->getSize() ||*/ buffer == nullptr || size == 0)
             return;
 
         addPatch(offset, buffer, size);
@@ -70,11 +70,11 @@ namespace hex::prv {
     void MemProvider::readRaw(u64 offset, void *buffer, size_t size) {
         offset -= this->getBaseAddress();
 
-        if ((offset + size) > this->getSize() || buffer == nullptr || size == 0)
+        if (/*(offset + size) > this->getSize() ||*/ buffer == nullptr || size == 0)
             return;
 
         auto const address = PageSize * this->m_currPage + offset;
-        auto const pointer = (void*)(uintptr_t)(uint32_t)address;
+        auto const pointer = (void*)(uintptr_t)address;
 
         ReadProcessMemory(m_handle, pointer, buffer, size, nullptr);
     }
@@ -94,7 +94,7 @@ namespace hex::prv {
     }
 
     size_t MemProvider::getActualSize() const {
-        return 0x1'0000'0000;
+        return 0x100000000000000;
     }
 
     std::string MemProvider::getName() const {
@@ -132,7 +132,8 @@ namespace hex::prv {
             HMODULE module = {};
             DWORD size = {};
             EnumProcessModules(m_handle, &module, sizeof(module), &size);
-            m_exe_base = (u32)(uintptr_t)module;
+            m_exe_base = (uintptr_t)module;
+            this->setCurrentPage(std::floor(double(m_exe_base) / prv::Provider::PageSize));
 
             break;
         }
